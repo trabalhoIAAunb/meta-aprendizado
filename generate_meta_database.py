@@ -7,7 +7,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from pymfe.mfe import MFE
 import csv
-import math
+from os.path import join
 
 np.__version__
 pd.__version__
@@ -45,7 +45,7 @@ def get_best_classifier(val1, val2):
 
 # Obtém os meta-atributos das bases de dados (preditivos e alvo), utilizando KNN e árvore de decisão
 def get_meta_feats(dataset_name):
-    raw_dataset = load_dataset('./bases_de_dados/'+dataset_name)
+    raw_dataset = load_dataset(join('bases_de_dados',dataset_name))
     x, y = split_standardize_dataset(raw_dataset)
 
     meta_feats_extractor = MFE()
@@ -57,7 +57,7 @@ def get_meta_feats(dataset_name):
     scores_1 = cross_validate(estimator=classifier_1, X=x, y=y, scoring=('accuracy','f1'), cv=10)
     accuracy_1, f1_1 = mean_scores(scores_1)
 
-    classifier_2 = KNeighborsClassifier(n_neighbors=15, metric='euclidean')
+    classifier_2 = KNeighborsClassifier(n_neighbors=5, metric='euclidean')
     scores_2 = cross_validate(estimator=classifier_2, X=x, y=y, scoring=('accuracy','f1'), cv=10)
     accuracy_2, f1_2 = mean_scores(scores_2)
 
@@ -73,12 +73,12 @@ def get_meta_feats(dataset_name):
 
 # Gera arquivo .npy com os meta-atributos
 def generate_npy_file(meta_database):
-    np.save(f"./meta_database",meta_database)
+    np.save(f"meta_database",meta_database)
 
 # Gera arquivo .csv com os meta-atributos
 def generate_csv_file(meta_database):
     all_meta_feat_types = ['attr_conc.mean', 'attr_conc.sd', 'attr_ent.mean', 'attr_ent.sd', 'attr_to_inst', 'best_node.mean', 'best_node.sd', 'can_cor.mean', 'can_cor.sd', 'cat_to_num', 'class_conc.mean', 'class_conc.sd', 'class_ent', 'cor.mean', 'cor.sd', 'cov.mean', 'cov.sd', 'eigenvalues.mean', 'eigenvalues.sd', 'elite_nn.mean', 'elite_nn.sd', 'eq_num_attr', 'freq_class.mean', 'freq_class.sd', 'g_mean.mean', 'g_mean.sd', 'gravity', 'h_mean.mean', 'h_mean.sd', 'inst_to_attr', 'iq_range.mean', 'iq_range.sd', 'joint_ent.mean', 'joint_ent.sd', 'kurtosis.mean', 'kurtosis.sd', 'leaves', 'leaves_branch.mean', 'leaves_branch.sd', 'leaves_corrob.mean', 'leaves_corrob.sd', 'leaves_homo.mean', 'leaves_homo.sd', 'leaves_per_class.mean', 'leaves_per_class.sd', 'lh_trace', 'linear_discr.mean', 'linear_discr.sd', 'mad.mean', 'mad.sd', 'max.mean', 'max.sd', 'mean.mean', 'mean.sd', 'median.mean', 'median.sd', 'min.mean', 'min.sd', 'mut_inf.mean', 'mut_inf.sd', 'naive_bayes.mean', 'naive_bayes.sd', 'nodes', 'nodes_per_attr', 'nodes_per_inst', 'nodes_per_level.mean', 'nodes_per_level.sd', 'nodes_repeated.mean', 'nodes_repeated.sd', 'nr_attr', 'nr_bin', 'nr_cat', 'nr_class', 'nr_cor_attr', 'nr_disc', 'nr_inst', 'nr_norm', 'nr_num', 'nr_outliers', 'ns_ratio', 'num_to_cat', 'one_nn.mean', 'one_nn.sd', 'p_trace', 'random_node.mean', 'random_node.sd', 'range.mean', 'range.sd', 'roy_root', 'sd.mean', 'sd.sd', 'sd_ratio', 'skewness.mean', 'skewness.sd', 'sparsity.mean', 'sparsity.sd', 't_mean.mean', 't_mean.sd', 'tree_depth.mean', 'tree_depth.sd', 'tree_imbalance.mean', 'tree_imbalance.sd', 'tree_shape.mean', 'tree_shape.sd', 'var.mean', 'var.sd', 'var_importance.mean', 'var_importance.sd', 'w_lambda', 'worst_node.mean', 'worst_node.sd','pred_classifier']
-    with open('./meta_database.csv', 'w') as f:
+    with open('meta_database.csv', 'w') as f:
         write = csv.writer(f)
         write.writerow(all_meta_feat_types)
         write.writerows(meta_database)

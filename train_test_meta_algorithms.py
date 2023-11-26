@@ -30,7 +30,7 @@ def get_algorithm_performance_metrics(classifier, x, y, cv):
     accuracy, f1 = mean_scores(scores)
     return accuracy, f1
 
-raw_meta_database = np.load("./meta_database.npy")
+raw_meta_database = np.load("meta_database.npy")
 finite_values_meta_database = np.nan_to_num(raw_meta_database)
 raw_x, y = split_standardize_dataset(finite_values_meta_database)
 finite_values_x = np.nan_to_num(raw_x)
